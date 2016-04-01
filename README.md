@@ -6,6 +6,8 @@ A run-length-encoder ([RLE](https://en.wikipedia.org/wiki/Run-length_encoding)) 
 npm install bitfield-rle
 ```
 
+[![build status](http://img.shields.io/travis/mafintosh/bitfield-rle.svg?style=flat)](http://travis-ci.org/mafintosh/bitfield-rle)
+
 ## Usage
 
 ``` js
