@@ -11,6 +11,15 @@ tape('encodes and decodes', function (t) {
   t.end()
 })
 
+tape('encodingLength', function (t) {
+  var bits = bitfield(1024)
+  var len = rle.encodingLength(bits.buffer)
+  t.ok(len < bits.buffer.length, 'is smaller')
+  var deflated = rle.encode(bits.buffer)
+  t.same(len, deflated.length, 'encoding length is similar to encoded buffers length')
+  t.end()
+})
+
 tape('encodes and decodes with all bits set', function (t) {
   var bits = bitfield(1024)
 

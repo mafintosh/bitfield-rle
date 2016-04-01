@@ -6,12 +6,7 @@ exports.decode = decode
 
 encode.bytes = decode.bytes = 0
 
-function encodingLength (bytes) { // quick hack to be abstract-encoder compliant
-  return encode(bytes).length
-}
-
-function encode (bytes, buf, offset) {
-  var state = new CompressionState(bytes.length)
+function rle (bytes, state) {
   var prev = 2
   var len = 0
 
@@ -30,9 +25,21 @@ function encode (bytes, buf, offset) {
   }
 
   if (len) write(prev, bytes.length * 8 - len, len, state)
-  while (state.offset & 7) set(state.bitfield, state.offset++, 0)
+  while (state.offset & 7) {
+    if (state.bitfield) set(state.bitfield, state.offset++, bit)
+    else state.offset++
+  }
 
-  var bufLength = varint.encodingLength(state.deltas.length / 2) + state.deltasBytes + state.offset / 8
+  return varint.encodingLength(state.deltas.length / 2) + state.deltasBytes + state.offset / 8
+}
+
+function encodingLength (bytes) {
+  return rle(bytes, new CompressionState(0))
+}
+
+function encode (bytes, buf, offset) {
+  var state = new CompressionState(bytes.length)
+  var bufLength = rle(bytes, state)
   if (!buf) buf = Buffer(bufLength)
   if (!offset) offset = 0
 
@@ -47,7 +54,7 @@ function encode (bytes, buf, offset) {
   encode.bytes = bufLength
   state.bitfield.copy(buf, offset)
 
-  return buf
+  return buf.slice(0, bufLength)
 }
 
 function write (bit, start, length, state) {
@@ -57,10 +64,14 @@ function write (bit, start, length, state) {
   if (8 * cost + 1 < length) {
     state.deltasBytes += cost
     state.deltasAcc += delta + length
-    state.deltas.push(delta, length)
-    set(state.bitfield, state.offset++, bit)
+    if (state.deltas) state.deltas.push(delta, length)
+    if (state.bitfield) set(state.bitfield, state.offset++, bit)
+    else state.offset++
   } else {
-    for (var i = 0; i < length; i++) set(state.bitfield, state.offset++, bit)
+    for (var i = 0; i < length; i++) {
+      if (state.bitfield) set(state.bitfield, state.offset++, bit)
+      else state.offset++
+    }
   }
 }
 
@@ -128,7 +139,7 @@ function set (bitfield, index, val) {
 }
 
 function CompressionState (length) { // using a prototype to make v8 happy
-  this.bitfield = Buffer(length)
+  this.bitfield = length ? Buffer(length) : null
   this.offset = 0
   this.deltas = []
   this.deltasAcc = 0
