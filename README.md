@@ -34,6 +34,22 @@ bitfield with the exception of a one byte header.
 Since this uses run-length-encoding, you'll get the best compression results if you have longer sequences
 of the same bit in your bitfield.
 
+## API
+
+The API is [abstract-encoding](https://github.com/mafintosh/abstract-encoding) compliant
+
+#### `buffer = rle.encode(bitfield, [buffer], [offset])`
+
+Run-length-encode a bitfield. Optionally you can pass in a buffer to encode it to.
+
+#### `length = rle.encodingLength(bitfield)`
+
+Returns how many bytes are needed to encode the bitfield
+
+#### `bitfield = rle.decode(buffer, [offset])`
+
+Decode an encoded bitfield.
+
 ## License
 
 MIT
