@@ -1,0 +1,27 @@
+{
+  "name": "bitfield-rle",
+  "version": "0.0.0",
+  "description": "A run-length-encoder that compresses bitfields.",
+  "main": "index.js",
+  "dependencies": {
+    "varint": "^4.0.0"
+  },
+  "devDependencies": {
+    "bitfield": "^1.1.2",
+    "standard": "^6.0.8",
+    "tape": "^4.5.1"
+  },
+  "scripts": {
+    "test": "standard && tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mafintosh/bitfield-rle.git"
+  },
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafintosh/bitfield-rle/issues"
+  },
+  "homepage": "https://github.com/mafintosh/bitfield-rle"
+}
