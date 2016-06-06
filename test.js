@@ -64,6 +64,20 @@ tape('encodes and decodes with random bits set', function (t) {
   t.end()
 })
 
+tape('encodes and decodes with random bits set (not power of two)', function (t) {
+  var bits = bitfield(8 * 1024)
+
+  for (var i = 0; i < 313; i++) {
+    bits.set(Math.floor(Math.random() * 8 * 1024), true)
+  }
+
+  var deflated = rle.encode(bits.buffer)
+  t.ok(deflated.length < bits.buffer.length, 'is smaller')
+  var inflated = rle.decode(deflated)
+  t.same(inflated, bits.buffer, 'decodes to same buffer')
+  t.end()
+})
+
 tape('throws on bad input', function (t) {
   t.throws(function () {
     rle.decode(Buffer([100]))
@@ -71,5 +85,12 @@ tape('throws on bad input', function (t) {
   t.throws(function () {
     rle.decode(Buffer([10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0]))
   }, 'missing delta')
+  t.end()
+})
+
+tape('not power of two', function (t) {
+  var deflated = rle.encode(Buffer([255, 255, 255, 240]))
+  var inflated = rle.decode(deflated)
+  t.same(inflated, Buffer([255, 255, 255, 240]), 'output equal to input')
   t.end()
 })

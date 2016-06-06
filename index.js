@@ -92,7 +92,7 @@ function decode (buf, offset) {
   }
 
   resultLength += 8 * (buf.length - offset)
-  if (resultLength & 7) resultLength -= (resultLength & 7) + 8
+  if (resultLength & 7) resultLength = resultLength - (resultLength & 7) + 8
 
   var result = Buffer(resultLength / 8)
   var bitfieldOffset = offset * 8
