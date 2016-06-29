@@ -1,6 +1,6 @@
 {
   "name": "bitfield-rle",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A run-length-encoder that compresses bitfields.",
   "main": "index.js",
   "dependencies": {
