@@ -52,7 +52,7 @@ function encode (bytes, buf, offset) {
   }
 
   encode.bytes = bufLength
-  state.bitfield.copy(buf, offset)
+  if (state.bitfield) state.bitfield.copy(buf, offset)
 
   return buf.slice(0, bufLength)
 }

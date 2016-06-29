@@ -78,6 +78,13 @@ tape('encodes and decodes with random bits set (not power of two)', function (t)
   t.end()
 })
 
+tape('encodes empty bitfield', function (t) {
+  var deflated = rle.encode(Buffer(0))
+  var inflated = rle.decode(deflated)
+  t.same(inflated, Buffer(0), 'still empty')
+  t.end()
+})
+
 tape('throws on bad input', function (t) {
   t.throws(function () {
     rle.decode(Buffer([100]))
