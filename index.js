@@ -1,4 +1,5 @@
 var varint = require('varint')
+var Buffer = require('safe-buffer').Buffer
 
 exports.encodingLength = encodingLength
 exports.encode = encode
@@ -40,7 +41,7 @@ function encodingLength (bytes) {
 function encode (bytes, buf, offset) {
   var state = new CompressionState(bytes.length)
   var bufLength = rle(bytes, state)
-  if (!buf) buf = Buffer(bufLength)
+  if (!buf) buf = Buffer.alloc(bufLength)
   if (!offset) offset = 0
 
   varint.encode(state.deltas.length / 2, buf, offset)
@@ -94,7 +95,7 @@ function decode (buf, offset) {
   resultLength += 8 * (buf.length - offset)
   if (resultLength & 7) resultLength = resultLength - (resultLength & 7) + 8
 
-  var result = Buffer(resultLength / 8)
+  var result = Buffer.alloc(resultLength / 8)
   var bitfieldOffset = offset * 8
   var bitfieldEnd = buf.length * 8
   var acc = 0
@@ -139,7 +140,7 @@ function set (bitfield, index, val) {
 }
 
 function CompressionState (length) { // using a prototype to make v8 happy
-  this.bitfield = length ? Buffer(length) : null
+  this.bitfield = length ? Buffer.alloc(length) : null
   this.offset = 0
   this.deltas = []
   this.deltasAcc = 0
