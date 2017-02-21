@@ -62,13 +62,13 @@ that is a varint.
 If the last bit is set in the varint (it is an odd number) then a header represents a compressed bit sequence.
 
 ```
-compressed-sequence = byte-length-of-sequence << 2 | bit << 1 | 1
+compressed-sequence = varint(byte-length-of-sequence << 2 | bit << 1 | 1)
 ```
 
 If the last bit is *not* set then a header represents an non compressed sequence
 
 ```
-uncompressed-sequence = byte-length-of-bitfield << 1 | 0 + (bitfield)
+uncompressed-sequence = varint(byte-length-of-bitfield << 1 | 0) + (bitfield)
 ```
 
 ## License
