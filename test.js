@@ -79,25 +79,25 @@ tape('encodes and decodes with random bits set (not power of two)', function (t)
 })
 
 tape('encodes empty bitfield', function (t) {
-  var deflated = rle.encode(Buffer(0))
+  var deflated = rle.encode(new Buffer(0))
   var inflated = rle.decode(deflated)
-  t.same(inflated, Buffer(0), 'still empty')
+  t.same(inflated, new Buffer(0), 'still empty')
   t.end()
 })
 
 tape('throws on bad input', function (t) {
   t.throws(function () {
-    rle.decode(Buffer([100]))
+    rle.decode(new Buffer([100]))
   }, 'invalid delta count')
   t.throws(function () {
-    rle.decode(Buffer([10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0]))
+    rle.decode(new Buffer([10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0]))
   }, 'missing delta')
   t.end()
 })
 
 tape('not power of two', function (t) {
-  var deflated = rle.encode(Buffer([255, 255, 255, 240]))
+  var deflated = rle.encode(new Buffer([255, 255, 255, 240]))
   var inflated = rle.decode(deflated)
-  t.same(inflated, Buffer([255, 255, 255, 240]), 'output equal to input')
+  t.same(inflated, new Buffer([255, 255, 255, 240]), 'output equal to input')
   t.end()
 })
