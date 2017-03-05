@@ -10,6 +10,7 @@ exports.decodingLength = decodingLength
 
 function State (input, output, offset) {
   this.inputOffset = 0
+  this.inputLength = input.length
   this.input = input
   this.outputOffset = offset
   this.output = output
@@ -84,7 +85,9 @@ function rle (state) {
   var bits = 0
   var input = state.input
 
-  for (var i = 0; i < input.length; i++) {
+  while (state.inputLength > 0 && !input[state.inputLength - 1]) state.inputLength--
+
+  for (var i = 0; i < state.inputLength; i++) {
     if (input[i] === bits) {
       len++
       continue
@@ -100,7 +103,7 @@ function rle (state) {
     }
   }
 
-  if (len) encodeUpdate(state, input.length, len, bits)
+  if (len) encodeUpdate(state, state.inputLength, len, bits)
   encodeFinal(state)
 }
 
@@ -113,16 +116,16 @@ function encodeHead (state, end) {
 }
 
 function encodeFinal (state) {
-  var headLength = state.input.length - state.inputOffset
+  var headLength = state.inputLength - state.inputOffset
   if (!headLength) return
 
   if (!state.output) {
     state.outputOffset += (headLength + varint.encodingLength(2 * headLength))
   } else {
-    encodeHead(state, state.input.length)
+    encodeHead(state, state.inputLength)
   }
 
-  state.inputOffset = state.input.length
+  state.inputOffset = state.inputLength
 }
 
 function encodeUpdate (state, i, len, bit) {
