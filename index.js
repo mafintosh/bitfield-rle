@@ -1,4 +1,5 @@
 var varint = require('varint')
+var bufferAlloc = require('buffer-alloc')
 
 exports.encode = encode
 exports.encode.bytes = 0
@@ -18,7 +19,7 @@ function State (input, output, offset) {
 
 function encode (bitfield, buffer, offset) {
   if (!offset) offset = 0
-  if (!buffer) buffer = new Buffer(encodingLength(bitfield))
+  if (!buffer) buffer = bufferAlloc(encodingLength(bitfield))
   var state = new State(bitfield, buffer, offset)
   rle(state)
   encode.bytes = state.outputOffset - offset
@@ -34,7 +35,7 @@ function encodingLength (bitfield) {
 function decode (buffer, offset) {
   if (!offset) offset = 0
 
-  var bitfield = new Buffer(decodingLength(buffer, offset))
+  var bitfield = bufferAlloc(decodingLength(buffer, offset))
   var ptr = 0
 
   while (offset < buffer.length) {
