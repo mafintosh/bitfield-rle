@@ -1,6 +1,8 @@
 var tape = require('tape')
 var bitfield = require('bitfield')
 var rle = require('./')
+var bufferFrom = require('buffer-from')
+var bufferAlloc = require('buffer-alloc')
 
 tape('encodes and decodes', function (t) {
   var bits = bitfield(1024)
@@ -79,26 +81,26 @@ tape('encodes and decodes with random bits set (not power of two)', function (t)
 })
 
 tape('encodes empty bitfield', function (t) {
-  var deflated = rle.encode(new Buffer(0))
+  var deflated = rle.encode(bufferAlloc(0))
   var inflated = rle.decode(deflated)
-  t.same(inflated, new Buffer(0), 'still empty')
+  t.same(inflated, bufferAlloc(0), 'still empty')
   t.end()
 })
 
 tape('throws on bad input', function (t) {
   t.throws(function () {
-    rle.decode(new Buffer([100]))
+    rle.decode(bufferFrom([100]))
   }, 'invalid delta count')
   t.throws(function () {
-    rle.decode(new Buffer([10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0]))
+    rle.decode(bufferFrom([10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0]))
   }, 'missing delta')
   t.end()
 })
 
 tape('not power of two', function (t) {
-  var deflated = rle.encode(new Buffer([255, 255, 255, 240]))
+  var deflated = rle.encode(bufferFrom([255, 255, 255, 240]))
   var inflated = rle.decode(deflated)
-  t.same(inflated, new Buffer([255, 255, 255, 240]), 'output equal to input')
+  t.same(inflated, bufferFrom([255, 255, 255, 240]), 'output equal to input')
   t.end()
 })
 
