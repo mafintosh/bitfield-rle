@@ -64,6 +64,7 @@ function align (n) {
       ptr += len
     }
 
+    bitfield.fill(0, ptr)
     decode.bytes = buffer.length - offset
 
     return bitfield
@@ -87,7 +88,7 @@ function align (n) {
 
     if (offset > buffer.length) throw new Error('Invalid RLE bitfield')
 
-    if (len & (align - 1)) return len + (align - (len & (align - 1)))
+    if (len & (n - 1)) return len + (n - (len & (n - 1)))
 
     return len
   }
